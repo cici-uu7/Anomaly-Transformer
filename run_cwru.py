@@ -37,7 +37,7 @@ if __name__ == '__main__':
     parser.add_argument('--input_c', type=int, default=1)
     parser.add_argument('--output_c', type=int, default=1)
 
-    parser.add_argument('--batch_size', type=int, default=16)  # 显存允许的话可以调大
+    parser.add_argument('--batch_size', type=int, default=8)  # 显存允许的话可以调大
     parser.add_argument('--pretrained_model', type=str, default=None)
     parser.add_argument('--dataset', type=str, default='CWRU')
     parser.add_argument('--mode', type=str, default='train', choices=['train', 'test'])
