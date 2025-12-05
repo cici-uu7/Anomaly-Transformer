@@ -37,7 +37,7 @@ if __name__ == '__main__':
     parser.add_argument('--input_c', type=int, default=1)
     parser.add_argument('--output_c', type=int, default=1)
 
-    parser.add_argument('--batch_size', type=int, default=32)  # 显存允许的话可以调大
+    parser.add_argument('--batch_size', type=int, default=16)  # 显存允许的话可以调大
     parser.add_argument('--pretrained_model', type=str, default=None)
     parser.add_argument('--dataset', type=str, default='CWRU')
     parser.add_argument('--mode', type=str, default='train', choices=['train', 'test'])
@@ -51,6 +51,8 @@ if __name__ == '__main__':
     # 如果数据集中有 10 类，大概 90% 是异常。这对于无监督检测来说是个挑战（通常假设异常很少）。
     # 这里先设一个比较高的值，或者您可以根据验证集调整。
     parser.add_argument('--anormly_ratio', type=float, default=10.0)
+    # 修改 2: 新增 d_model 参数 (建议设为 64，原模型默认为 512 太大了)
+    parser.add_argument('--d_model', type=int, default=64)
 
     config = parser.parse_args()
 
