@@ -13,37 +13,92 @@ class CWRULoader(object):
         self.win_size = win_size
         self.scaler = StandardScaler()
 
-        # 假设 data_path 是包含 TRAIN.tsv, TEST.tsv, VAL.tsv 的目录
-        # 根据 TimesNet 的逻辑，CWRU数据已经是切分好的片段 (Sample, 1+Length)
-
         train_file = os.path.join(data_path, 'TRAIN.tsv')
         test_file = os.path.join(data_path, 'TEST.tsv')
         val_file = os.path.join(data_path, 'VAL.tsv')
 
-        # 读取数据
-        # 第一列是标签，后面是数据
-        train_df = pd.read_csv(train_file, sep='\t', header=None)
-        test_df = pd.read_csv(test_file, sep='\t', header=None)
-        val_df = pd.read_csv(val_file, sep='\t', header=None)
+        # 1. 读取数据：添加 na_values=['-'] 参数，告诉 pandas 把 '-' 当作缺失值 (NaN) 处理
+        train_df = pd.read_csv(train_file, sep='\t', header=None, na_values=['-'])
+        test_df = pd.read_csv(test_file, sep='\t', header=None, na_values=['-'])
+        val_df = pd.read_csv(val_file, sep='\t', header=None, na_values=['-'])
 
-        # 提取特征部分 (去除第一列标签)
+        # 2. 提取特征部分 (去除第一列标签)
         self.train = train_df.iloc[:, 1:].values
         self.test = test_df.iloc[:, 1:].values
         self.val = val_df.iloc[:, 1:].values
 
-        # 提取标签 (用于验证和测试评估)
+        # 3. 提取标签
         self.train_labels = train_df.iloc[:, 0].values
         self.test_labels = test_df.iloc[:, 0].values
         self.val_labels = val_df.iloc[:, 0].values
 
-        # 标准化 (仅使用训练集拟合)
+        # 4. 数据清洗关键步骤：
+        # (a) 强制转换为 float 类型 (NaN 也是 float，不会报错)
+        self.train = self.train.astype(float)
+        self.test = self.test.astype(float)
+        self.val = self.val.astype(float)
+
+        # (b) 将 NaN (即原来的 '-') 替换为 0.0
+        self.train = np.nan_to_num(self.train, nan=0.0)
+        self.test = np.nan_to_num(self.test, nan=0.0)
+        self.val = np.nan_to_num(self.val, nan=0.0)
+
+        # 5. 标准化 (仅使用训练集拟合)
         self.scaler.fit(self.train)
         self.train = self.scaler.transform(self.train)
         self.test = self.scaler.transform(self.test)
         self.val = self.scaler.transform(self.val)
 
-        # 转换为 Channel-last 格式: [N, Length, Channel]
-        # CWRU 是单变量振动数据，所以 Channel = 1
+        # 6. 转换为 Channel-last 格式
+        self.train = self.train[:, :, np.newaxis]
+        self.test = self.test[:, :, np.newaxis]
+        self.val = self.val[:, :, np.newaxis]
+
+        print(f"CWRU {mode} dataset loaded.")
+        print("Train shape:", self.train.shape)
+        print("Test shape:", self.test.shape)def __init__(self, data_path, win_size, step, mode="train"):
+        self.mode = mode
+        self.step = step
+        self.win_size = win_size
+        self.scaler = StandardScaler()
+
+        train_file = os.path.join(data_path, 'TRAIN.tsv')
+        test_file = os.path.join(data_path, 'TEST.tsv')
+        val_file = os.path.join(data_path, 'VAL.tsv')
+
+        # 1. 读取数据：添加 na_values=['-'] 参数，告诉 pandas 把 '-' 当作缺失值 (NaN) 处理
+        train_df = pd.read_csv(train_file, sep='\t', header=None, na_values=['-'])
+        test_df = pd.read_csv(test_file, sep='\t', header=None, na_values=['-'])
+        val_df = pd.read_csv(val_file, sep='\t', header=None, na_values=['-'])
+
+        # 2. 提取特征部分 (去除第一列标签)
+        self.train = train_df.iloc[:, 1:].values
+        self.test = test_df.iloc[:, 1:].values
+        self.val = val_df.iloc[:, 1:].values
+
+        # 3. 提取标签
+        self.train_labels = train_df.iloc[:, 0].values
+        self.test_labels = test_df.iloc[:, 0].values
+        self.val_labels = val_df.iloc[:, 0].values
+
+        # 4. 数据清洗关键步骤：
+        # (a) 强制转换为 float 类型 (NaN 也是 float，不会报错)
+        self.train = self.train.astype(float)
+        self.test = self.test.astype(float)
+        self.val = self.val.astype(float)
+
+        # (b) 将 NaN (即原来的 '-') 替换为 0.0
+        self.train = np.nan_to_num(self.train, nan=0.0)
+        self.test = np.nan_to_num(self.test, nan=0.0)
+        self.val = np.nan_to_num(self.val, nan=0.0)
+
+        # 5. 标准化 (仅使用训练集拟合)
+        self.scaler.fit(self.train)
+        self.train = self.scaler.transform(self.train)
+        self.test = self.scaler.transform(self.test)
+        self.val = self.scaler.transform(self.val)
+
+        # 6. 转换为 Channel-last 格式
         self.train = self.train[:, :, np.newaxis]
         self.test = self.test[:, :, np.newaxis]
         self.val = self.val[:, :, np.newaxis]
