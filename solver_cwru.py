@@ -123,7 +123,7 @@ class SolverCWRU(object):
         return np.average(loss_1), np.average(loss_2)
 
     def train(self):
-        print("======================TRAIN MODE (CWRU Optimized)======================")
+        print("======================TRAIN MODE ======================")
         time_now = time.time()
         path = self.model_save_path
         if not os.path.exists(path):
@@ -199,7 +199,7 @@ class SolverCWRU(object):
         self.model.eval()
         temperature = 50
 
-        print("======================TEST MODE (CWRU)======================")
+        print("======================TEST MODE======================")
         criterion = nn.MSELoss(reduce=False)
 
         # (1) Statistic on the train set
