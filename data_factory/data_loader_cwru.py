@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler
 
 
 class CWRULoader(object):
-def __init__(self, data_path, win_size, step, mode="train"):
+    def __init__(self, data_path, win_size, step, mode="train"):
         self.mode = mode
         self.step = step
         self.win_size = win_size
