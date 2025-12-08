@@ -31,7 +31,7 @@ if __name__ == '__main__':
 
     # CWRU 特有参数设置
     # TimesNet 中 seq_len = 1000，这里 win_size 对应序列长度
-    parser.add_argument('--win_size', type=int, default=500)
+    parser.add_argument('--win_size', type=int, default=1000)
 
     # CWRU 是单变量振动数据，所以 input_c 和 output_c 设为 1
     parser.add_argument('--input_c', type=int, default=1)
