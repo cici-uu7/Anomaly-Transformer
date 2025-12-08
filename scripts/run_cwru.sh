@@ -2,13 +2,13 @@
 
 # 设置数据集名称和路径
 DATASET_NAME="CWRU"
-DATA_PATH="./dataset/CWRU"
+DATA_PATH="./dataset/CWRU_AD"
 
 echo "========================================================"
 echo "Step 1: Running Data Preprocessing..."
 echo "========================================================"
 # 运行刚才生成的 Python 脚本
-python preprocess_cwru.py
+python ./AD/preprocess_cwru.py
 
 # 检查数据是否生成成功
 if [ ! -f "$DATA_PATH/TRAIN.tsv" ]; then
@@ -40,7 +40,7 @@ python run_cwru.py \
     --batch_size 8 \
     --num_epochs 10 \
     --lr 1e-4 \
-    --anormly_ratio 50.0
+    --anormly_ratio 90.0
 
 echo "========================================================"
 echo "Step 3: Evaluating Model..."
