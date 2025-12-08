@@ -83,6 +83,7 @@ class SolverCWRU(object):
             enc_in=self.input_c,
             c_out=self.output_c,
             d_model=self.d_model,
+            d_ff=self.d_ff,
             e_layers=3
         )
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr)
