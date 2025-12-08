@@ -7,7 +7,7 @@ from sklearn.preprocessing import StandardScaler
 
 # ================= 配置区域 =================
 # 数据集保存路径
-DATA_DIR = './dataset/CWRU_AD'
+DATA_DIR = './dataset/CWRU_AD/'
 
 # CWRU 官网数据下载链接
 DATA_URLS = {
