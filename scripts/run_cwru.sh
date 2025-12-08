@@ -56,6 +56,6 @@ python run_cwru.py \
     --d_model 64 \
     --d_ff 256 \
     --batch_size 8 \
-    --anormly_ratio 0.5
+    --anormly_ratio 90.0
 
 echo "Done! Check results in the 'results' directory."
