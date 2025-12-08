@@ -36,7 +36,7 @@ echo "========================================================"
 # 直接引用 $MODEL_ARGS，只需要补充训练特有的参数 (如 lr, epochs)
 python run_cwru.py \
     --mode train \
-    --num_epochs 10 \
+    --num_epochs 20 \
     --lr 1e-4 \
     $MODEL_ARGS
 
