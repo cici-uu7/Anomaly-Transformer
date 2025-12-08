@@ -40,7 +40,7 @@ python run_cwru.py \
     --batch_size 8 \
     --num_epochs 10 \
     --lr 1e-4 \
-    --anormly_ratio 0.5
+    --anormly_ratio 50.0
 
 echo "========================================================"
 echo "Step 3: Evaluating Model..."
