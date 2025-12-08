@@ -198,7 +198,7 @@ class SolverCWRU(object):
         self.model.load_state_dict(
             torch.load(os.path.join(str(self.model_save_path), str(self.dataset) + '_checkpoint.pth')))
         self.model.eval()
-        temperature = 1
+        temperature =5
 
         print("======================TEST MODE======================")
         criterion = nn.MSELoss(reduce=False)
