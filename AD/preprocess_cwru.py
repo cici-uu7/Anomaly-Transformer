@@ -20,7 +20,7 @@ DATA_URLS = {
 # 窗口大小
 WIN_SIZE = 1000
 # 滑动步长
-STRIDE = 100
+STRIDE = 200
 
 
 def download_data(save_dir):
