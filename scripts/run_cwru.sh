@@ -1,61 +1,52 @@
 #!/bin/bash
 
-# 设置数据集名称和路径
+# ================= 配置区域 =================
+# 1. 基础配置
 DATASET_NAME="CWRU"
 DATA_PATH="./dataset/CWRU_AD"
+
+# 2. 定义通用的模型参数 (训练和测试必须保持一致的部分!)
+# 使用变量保存，避免重复书写，也避免手误导致训练/测试参数不一致
+MODEL_ARGS="--dataset $DATASET_NAME \
+            --data_path $DATA_PATH \
+            --win_size 1000 \
+            --input_c 1 \
+            --output_c 1 \
+            --d_model 64 \
+            --d_ff 256 \
+            --batch_size 8 \
+            --anormly_ratio 88.3"
+
+# ================= 脚本执行区域 =================
 
 echo "========================================================"
 echo "Step 1: Running Data Preprocessing..."
 echo "========================================================"
-# 运行刚才生成的 Python 脚本
+# 运行预处理 (如果数据已存在且不需要重新生成，可以注释掉这一行以节省时间)
 python ./AD/preprocess_cwru.py
 
-# 检查数据是否生成成功
 if [ ! -f "$DATA_PATH/TRAIN.tsv" ]; then
-    echo "Error: TRAIN.tsv not found. Preprocessing failed."
+    echo "Error: TRAIN.tsv not found."
     exit 1
 fi
 
 echo "========================================================"
-echo "Step 2: Training Anomaly Transformer on CWRU..."
+echo "Step 2: Training..."
 echo "========================================================"
-
-# 关键参数解释:
-# --win_size 1000: 对应 CWRU 高频信号，捕捉足够长的周期
-# --input_c 1: 单变量输入 (只用了 Drive End 加速度)
-# --d_model 64: 降低模型复杂度，避免在小数据集上过拟合
-# --batch_size 8: 防止 OOM (1000长度的Attention矩阵很大)
-# --anormly_ratio 0.5: 这是一个先验估计，表示测试集中大概有多少比例是异常
-# (在我们的预处理中，测试集包含了3种故障和1种正常，异常比例约为 75%，所以设 0.5-0.8 比较合适)
-
+# 直接引用 $MODEL_ARGS，只需要补充训练特有的参数 (如 lr, epochs)
 python run_cwru.py \
     --mode train \
-    --dataset $DATASET_NAME \
-    --data_path $DATA_PATH \
-    --win_size 1000 \
-    --input_c 1 \
-    --output_c 1 \
-    --d_model 64 \
-    --d_ff 256 \
-    --batch_size 8 \
     --num_epochs 10 \
     --lr 1e-4 \
-    --anormly_ratio 90.0
+    $MODEL_ARGS
+
 
 echo "========================================================"
-echo "Step 3: Evaluating Model..."
+echo "Step 3: Evaluating..."
 echo "========================================================"
-
+# 直接引用 $MODEL_ARGS，参数完全复用，确保一致性
 python run_cwru.py \
     --mode test \
-    --dataset $DATASET_NAME \
-    --data_path $DATA_PATH \
-    --win_size 1000 \
-    --input_c 1 \
-    --output_c 1 \
-    --d_model 64 \
-    --d_ff 256 \
-    --batch_size 8 \
-    --anormly_ratio 90.0
+    $MODEL_ARGS
 
-echo "Done! Check results in the 'results' directory."
+echo "Done!"
